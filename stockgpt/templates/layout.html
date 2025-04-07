@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}StockGPT{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">StockGPT</div>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/stocks">Stocks</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2023 StockGPT - Indian Stock Market Analysis</p>
+    </footer>
+    <script src="{{ url_for('static', path='/js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

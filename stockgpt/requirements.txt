@@ -1,0 +1,45 @@
+# Data Collection
+yfinance==0.1.74
+nsepy
+beautifulsoup4
+requests==2.28.1
+pandas==1.4.4
+selenium
+newspaper3k
+praw
+
+# Data Processing
+numpy==1.23.3
+scipy
+scikit-learn==1.1.2
+statsmodels
+ta-lib==0.4.24
+
+# Machine Learning and NLP
+tensorflow
+torch
+transformers
+sentence-transformers
+nltk
+gensim
+
+# Web and API
+fastapi==0.85.0
+uvicorn==0.18.3
+pydantic==1.10.2
+plotly
+dash
+
+# Database
+psycopg2-binary
+pymongo
+sqlalchemy
+
+# Utils
+python-dotenv==0.21.0
+tqdm
+joblib
+python-dateutil==2.8.2
+aiofiles==0.8.0
+jinja2==3.1.2
+matplotlib==3.6.0 

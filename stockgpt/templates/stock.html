@@ -1,0 +1,299 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ symbol }} - Stock Analysis{% endblock %}
+
+{% block content %}
+<div class="stock-header">
+    <h1>{{ symbol }}</h1>
+    <div class="price-box">
+        <span class="current-price">₹{{ analysis.price }}</span>
+        <span class="price-change {% if analysis.change >= 0 %}positive{% else %}negative{% endif %}">
+            {{ analysis.change }}% {% if analysis.change >= 0 %}▲{% else %}▼{% endif %}
+        </span>
+    </div>
+</div>
+
+<div class="tabs">
+    <button class="tab-button active" onclick="openTab(event, 'overview')">Overview</button>
+    <button class="tab-button" onclick="openTab(event, 'fundamental')">Fundamental</button>
+    <button class="tab-button" onclick="openTab(event, 'technical')">Technical</button>
+    <button class="tab-button" onclick="openTab(event, 'sentiment')">Sentiment</button>
+    <button class="tab-button" onclick="openTab(event, 'risk')">Risk</button>
+    <button class="tab-button" onclick="openTab(event, 'prediction')">Prediction</button>
+</div>
+
+<div id="overview" class="tab-content active">
+    <div class="summary-box">
+        <h2>Summary</h2>
+        <p>{{ analysis.summary }}</p>
+    </div>
+    
+    <div class="key-metrics">
+        <div class="metric">
+            <span class="metric-title">Market Cap</span>
+            <span class="metric-value">₹{{ analysis.market_cap }}</span>
+        </div>
+        <div class="metric">
+            <span class="metric-title">P/E Ratio</span>
+            <span class="metric-value">{{ analysis.pe_ratio }}</span>
+        </div>
+        <div class="metric">
+            <span class="metric-title">52w High</span>
+            <span class="metric-value">₹{{ analysis.high_52w }}</span>
+        </div>
+        <div class="metric">
+            <span class="metric-title">52w Low</span>
+            <span class="metric-value">₹{{ analysis.low_52w }}</span>
+        </div>
+    </div>
+    
+    <div class="chart-container">
+        <canvas id="priceChart"></canvas>
+    </div>
+</div>
+
+<div id="fundamental" class="tab-content">
+    <h2>Fundamental Analysis</h2>
+    <div class="fundamental-metrics">
+        {% for category, metrics in analysis.fundamental.items() %}
+        <div class="metric-category">
+            <h3>{{ category }}</h3>
+            <ul>
+                {% for metric, value in metrics.items() %}
+                <li><strong>{{ metric }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="technical" class="tab-content">
+    <h2>Technical Analysis</h2>
+    <div class="technical-indicators">
+        {% for category, indicators in analysis.technical.items() %}
+        <div class="indicator-category">
+            <h3>{{ category }}</h3>
+            <ul>
+                {% for indicator, value in indicators.items() %}
+                <li><strong>{{ indicator }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <h3>Pattern Recognition</h3>
+    <div class="patterns">
+        {% for pattern in patterns %}
+        <div class="pattern">
+            <span class="pattern-name">{{ pattern.name }}</span>
+            <span class="pattern-signal {% if pattern.bullish %}bullish{% else %}bearish{% endif %}">
+                {{ "Bullish" if pattern.bullish else "Bearish" }}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="sentiment" class="tab-content">
+    <h2>Sentiment Analysis</h2>
+    <div class="sentiment-overview">
+        <div class="sentiment-score">
+            <h3>Overall Sentiment</h3>
+            <div class="score-meter">
+                <div class="meter" style="width: {{ sentiment.score }}%"></div>
+            </div>
+            <span class="score-label">{{ sentiment.label }}</span>
+        </div>
+    </div>
+    
+    <div class="sentiment-sources">
+        <div class="source">
+            <h3>News Sentiment</h3>
+            <p>{{ sentiment.news.summary }}</p>
+            <ul>
+                {% for insight in sentiment.news.insights %}
+                <li>{{ insight }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        
+        <div class="source">
+            <h3>Social Media Sentiment</h3>
+            <p>{{ sentiment.social.summary }}</p>
+            <ul>
+                {% for insight in sentiment.social.insights %}
+                <li>{{ insight }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="risk" class="tab-content">
+    <h2>Risk Assessment</h2>
+    <div class="risk-summary">
+        <h3>Risk Level: <span class="risk-level {{ risk.level.lower() }}">{{ risk.level }}</span></h3>
+        <p>{{ risk.summary }}</p>
+    </div>
+    
+    <div class="risk-metrics">
+        <div class="metric">
+            <span class="metric-title">Beta</span>
+            <span class="metric-value">{{ risk.beta }}</span>
+        </div>
+        <div class="metric">
+            <span class="metric-title">Volatility</span>
+            <span class="metric-value">{{ risk.volatility }}%</span>
+        </div>
+        <div class="metric">
+            <span class="metric-title">VaR (95%)</span>
+            <span class="metric-value">{{ risk.var_95 }}%</span>
+        </div>
+        <div class="metric">
+            <span class="metric-title">Max Drawdown</span>
+            <span class="metric-value">{{ risk.max_drawdown }}%</span>
+        </div>
+    </div>
+    
+    <div class="risk-insights">
+        <h3>Risk Insights</h3>
+        <ul>
+            {% for insight in risk.insights %}
+            <li>{{ insight }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div id="prediction" class="tab-content">
+    <h2>Price Prediction</h2>
+    <div class="prediction-summary">
+        <h3>
+            Predicted Price: ₹{{ prediction.price }}
+            <span class="prediction-change {% if prediction.change >= 0 %}positive{% else %}negative{% endif %}">
+                {{ prediction.change }}% {% if prediction.change >= 0 %}▲{% else %}▼{% endif %}
+            </span>
+        </h3>
+        <p>Prediction confidence: {{ prediction.confidence }}%</p>
+        <p>Prediction target date: {{ prediction.date }}</p>
+    </div>
+    
+    <div class="prediction-chart">
+        <canvas id="predictionChart"></canvas>
+    </div>
+    
+    <div class="prediction-explanation">
+        <h3>Prediction Basis</h3>
+        <p>{{ prediction.explanation }}</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openTab(evt, tabName) {
+    var i, tabcontent, tabbuttons;
+    
+    // Hide all tab content
+    tabcontent = document.getElementsByClassName("tab-content");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove("active");
+    }
+    
+    // Remove "active" class from all tab buttons
+    tabbuttons = document.getElementsByClassName("tab-button");
+    for (i = 0; i < tabbuttons.length; i++) {
+        tabbuttons[i].classList.remove("active");
+    }
+    
+    // Show the current tab and add "active" class to the button
+    document.getElementById(tabName).classList.add("active");
+    evt.currentTarget.classList.add("active");
+}
+
+// Price chart
+const priceCtx = document.getElementById('priceChart').getContext('2d');
+const priceChart = new Chart(priceCtx, {
+    type: 'line',
+    data: {
+        labels: {{ analysis.price_dates | safe }},
+        datasets: [{
+            label: 'Price',
+            data: {{ analysis.price_data | safe }},
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1,
+            pointRadius: 0,
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            x: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Date'
+                }
+            },
+            y: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Price (₹)'
+                }
+            }
+        }
+    }
+});
+
+// Prediction chart
+const predictionCtx = document.getElementById('predictionChart').getContext('2d');
+const predictionChart = new Chart(predictionCtx, {
+    type: 'line',
+    data: {
+        labels: {{ prediction.dates | safe }},
+        datasets: [
+            {
+                label: 'Historical Price',
+                data: {{ prediction.historical | safe }},
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1,
+                pointRadius: 0,
+                borderWidth: 2
+            },
+            {
+                label: 'Predicted Price',
+                data: {{ prediction.future | safe }},
+                borderColor: 'rgb(255, 99, 132)',
+                borderDash: [5, 5],
+                tension: 0.1,
+                pointRadius: 0,
+                borderWidth: 2
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            x: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Date'
+                }
+            },
+            y: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Price (₹)'
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %} 

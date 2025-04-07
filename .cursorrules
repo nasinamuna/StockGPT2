@@ -1,0 +1,48 @@
+# StockGPT Project Rules
+
+## Project Structure
+- Backend code in `stockgpt/src`
+- Frontend code in `stockgpt-frontend/src`
+- Memory bank in `memory-bank/`
+- Data in `stockgpt/data/`
+
+## Code Style
+- Backend: PEP 8 with 120 char line length
+- Frontend: ESLint with React rules
+- Use type hints in Python
+- Use PropTypes in React
+
+## Naming Conventions
+- Python: snake_case for variables and functions
+- React: PascalCase for components, camelCase for functions
+- Files: lowercase with hyphens for frontend, lowercase with underscores for backend
+
+## API Patterns
+- RESTful endpoints
+- Consistent error responses
+- Versioned API routes
+- Swagger documentation
+
+## Testing
+- Backend: pytest with coverage
+- Frontend: Jest with React Testing Library
+- API: Integration tests
+- UI: Component tests
+
+## Error Handling
+- Backend: Custom exception handlers
+- Frontend: Error boundaries
+- API: Consistent error format
+- Logging: Structured format
+
+## Performance
+- Backend: Async operations
+- Frontend: Lazy loading
+- API: Caching where appropriate
+- Data: Efficient processing
+
+## Security
+- API: Rate limiting
+- Data: Input validation
+- Auth: JWT tokens
+- CORS: Strict configuration 
